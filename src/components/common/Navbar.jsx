@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const navLinks = [
   { name: 'CONNECT', href: '/staking' },
@@ -54,12 +55,12 @@ export default function Navbar() {
       <ul className="hidden space-x-8 md:flex">
         {navLinks.map((link) => (
           <li key={link.name}>
-            <a
-              href={link.href}
+            <Link
+              to={link.href}
               className="text-sm font-normal text-gray-800 transition-colors hover:text-black"
             >
               {link.name}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -86,13 +87,13 @@ export default function Navbar() {
           <ul className="flex flex-col mt-16 space-y-8 w-full text-center">
             {navLinks.map((link) => (
               <li key={link.name}>
-                <a
-                  href={link.href}
+                <Link
+                  to={link.href}
                   className="text-sm font-normal text-gray-900 transition-colors hover:text-black"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
